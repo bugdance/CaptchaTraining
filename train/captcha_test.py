@@ -39,7 +39,20 @@ def test(n):
 
 def test2(n):
 	s = requests.session()
-	response = s.get("https://cashiermd.95516.com/b2c/checkcode.action")
+	header = {
+		"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
+					  "Chrome/86.0.4240.75 Safari/537.36",
+		"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,"
+				  "image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+		"Accept-Language": "en-US,en;q=0.9,zh;q=0.8,zh-TW;q=0.7",
+		"Host": "weixin.sogou.com",
+		"Sec-Fetch-Site": "same-origin",
+		"Sec-Fetch-Mode": "no-cors",
+		"Sec-Fetch-Dest": "image",
+		"Referer": "https://weixin.sogou.com/antispider/?from=%2Fweixin%3Ftype%3D1%26query%3DLife-BOOKs%26ie%3Dutf8%26s_from%3Dinput%26_sug_%3Dy%26_sug_type_%3D",
+
+	}
+	response = s.get(url="https://weixin.sogou.com/antispider/util/seccode.php", headers=header)
 	image_data = response.content
 
 
@@ -57,7 +70,9 @@ def test2(n):
 
 	# with open(f"img/{response.text}-{int(time.time())}.png", "wb") as f:
 	# 	f.write(image_data)
-	
+
+	with open(f"captcha.png", "wb") as f:
+		f.write(image_data)
 	
 
 
@@ -67,14 +82,16 @@ def test2(n):
 
 if __name__ == '__main__':
 
+	test2(1)
+
 	# for i in range(100):
 	# 	test2(i)
 	
-	executor = ThreadPoolExecutor(max_workers=1)
-	urls = [3 for x in range(5000)]  # 并不是真的url
-	for data in executor.map(test, urls):
-		pass
-	
+	# executor = ThreadPoolExecutor(max_workers=1)
+	# urls = [3 for x in range(5000)]  # 并不是真的url
+	# for data in executor.map(test, urls):
+	# 	pass
+	#
 
 
 

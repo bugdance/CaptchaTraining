@@ -32,10 +32,11 @@ class CaptchaRun:
 		self.up_case = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
 		                'T', 'U',
 		                'V', 'W', 'X', 'Y', 'Z']
-		self.captcha_list = self.number + self.low_case
-		self.captcha_len = 4
-		self.captcha_height = 35
-		self.captcha_width = 104
+		self.test_case = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'M', 'P', 'R', 'S', 'T', 'V', 'X', 'Y']
+		self.captcha_list = self.number + self.test_case
+		self.captcha_len = 6
+		self.captcha_height = 66
+		self.captcha_width = 203
 		self.tf = tf
 	
 	def vec2text(self, vec):
@@ -190,11 +191,11 @@ class CaptchaRun:
 		saver = tf.compat.v1.train.Saver()
 		module_file = tf.compat.v1.train.latest_checkpoint(model_path)
 		
-		config = tf.compat.v1.ConfigProto(device_count={"CPU": 4},  # limit to num_cpu_core CPU usage
-		                        inter_op_parallelism_threads=1,
-		                        intra_op_parallelism_threads=1,
+		# config = tf.compat.v1.ConfigProto(device_count={"CPU": 4},  # limit to num_cpu_core CPU usage
+		#                         inter_op_parallelism_threads=1,
+		#                         intra_op_parallelism_threads=1,
 		#                         # log_device_placement=True
-		                                  )
+		#                                   )
 		
 		with tf.compat.v1.Session() as sess:
 			

@@ -30,11 +30,12 @@ class CaptchaSelect:
             'v', 'w', 'x', 'y', 'z']
         self.up_case = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U',
            'V', 'W', 'X', 'Y', 'Z']
-        self.captcha_list = self.number + self.low_case
-        self.captcha_len = 4
-        self.captcha_height = 35
-        self.captcha_width = 104
-        self.captcha_path = 'test/'  # 图片文件夹
+        self.test_case = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'M', 'P', 'R', 'S', 'T', 'V', 'X', 'Y']
+        self.captcha_list = self.number + self.test_case
+        self.captcha_len = 6
+        self.captcha_height = 66
+        self.captcha_width = 203
+        self.captcha_path = '../../done/'  # 图片文件夹
     
     def random_captcha_text(self):
         """
@@ -67,7 +68,7 @@ class CaptchaSelect:
         captcha_image = Image.open(self.captcha_path + p)
         # 转化为np数组
         captcha_image = np.array(captcha_image)
-        return s[0][:4], captcha_image
+        return s[0][:6], captcha_image    # 这里要改
 
 
     # transform

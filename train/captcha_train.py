@@ -23,7 +23,9 @@ from train.captcha_select import CaptchaSelect
 
 
 class CaptchaTrain:
-	
+
+	# tf.compat.v1.disable_eager_execution()  # version 2.3.1
+
 	def __init__(self):
 		self.number = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 		self.low_case = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's',
@@ -32,10 +34,12 @@ class CaptchaTrain:
 		self.up_case = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
 		                'T', 'U',
 		                'V', 'W', 'X', 'Y', 'Z']
-		self.captcha_list = self.number + self.low_case
-		self.captcha_len = 4
-		self.captcha_height = 35
-		self.captcha_width = 104
+
+		self.test_case = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'M', 'P', 'R', 'S', 'T', 'V', 'X', 'Y']
+		self.captcha_list = self.number + self.test_case
+		self.captcha_len = 6
+		self.captcha_height = 66
+		self.captcha_width = 203
 		
 		self.CS = CaptchaSelect()
 		
