@@ -30,8 +30,7 @@ class CaptchaSelect:
             'v', 'w', 'x', 'y', 'z']
         self.up_case = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U',
            'V', 'W', 'X', 'Y', 'Z']
-        self.test_case = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'M', 'P', 'R', 'S', 'T', 'V', 'X', 'Y']
-        self.captcha_list = self.number + self.test_case
+        self.captcha_list = self.number + self.up_case
         self.captcha_len = 6
         self.captcha_height = 66
         self.captcha_width = 203
