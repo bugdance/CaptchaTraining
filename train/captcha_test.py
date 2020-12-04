@@ -20,6 +20,7 @@ from train.captcha_run import CaptchaRun
 from concurrent.futures import ThreadPoolExecutor
 import requests
 import time
+from PIL import Image
 
 
 
@@ -38,22 +39,44 @@ def test(n):
 
 
 def test2(n):
-	s = requests.session()
-	header = {
-		"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
-					  "Chrome/86.0.4240.75 Safari/537.36",
-		"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,"
-				  "image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
-		"Accept-Language": "en-US,en;q=0.9,zh;q=0.8,zh-TW;q=0.7",
-		"Host": "weixin.sogou.com",
-		"Sec-Fetch-Site": "same-origin",
-		"Sec-Fetch-Mode": "no-cors",
-		"Sec-Fetch-Dest": "image",
-		"Referer": "https://weixin.sogou.com/antispider/?from=%2Fweixin%3Ftype%3D1%26query%3DLife-BOOKs%26ie%3Dutf8%26s_from%3Dinput%26_sug_%3Dy%26_sug_type_%3D",
+	# s = requests.session()
+	# header = {
+	# 	"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
+	# 				  "Chrome/86.0.4240.75 Safari/537.36",
+	# 	"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,"
+	# 			  "image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+	# 	"Accept-Language": "en-US,en;q=0.9,zh;q=0.8,zh-TW;q=0.7",
+	# 	"Host": "weixin.sogou.com",
+	# 	"Sec-Fetch-Site": "same-origin",
+	# 	"Sec-Fetch-Mode": "no-cors",
+	# 	"Sec-Fetch-Dest": "image",
+	# 	"Referer": "https://weixin.sogou.com/antispider/?from=%2Fweixin%3Ftype%3D1%26query%3DLife-BOOKs%26ie%3Dutf8%26s_from%3Dinput%26_sug_%3Dy%26_sug_type_%3D",
+	#
+	# }
+	# response = s.get(url="https://weixin.sogou.com/antispider/util/seccode.php", headers=header)
+	# image_data = response.content
 
-	}
-	response = s.get(url="https://weixin.sogou.com/antispider/util/seccode.php", headers=header)
-	image_data = response.content
+	# 打开文件夹中的图片
+	image=Image.open(f'test.jpg')
+	# 灰度图
+	lim=image.convert('L')
+	# 灰度阈值设为165，低于这个值的点全部填白色
+	threshold=165
+	table=[]
+
+	for j in range(256):
+		if j<threshold:
+			table.append(0)
+		else:
+			table.append(1)
+
+	bim=lim.point(table,'1')
+	bim.save(f'test2.jpg')
+
+
+
+	with open(f"test2.jpg", "rb") as f:
+		image_data = f.read()
 
 
 	s = time.time()
@@ -71,8 +94,8 @@ def test2(n):
 	# with open(f"img/{response.text}-{int(time.time())}.png", "wb") as f:
 	# 	f.write(image_data)
 
-	with open(f"captcha.png", "wb") as f:
-		f.write(image_data)
+	# with open(f"test.jpg", "wb") as f:
+	# 	f.write(image_data)
 	
 
 

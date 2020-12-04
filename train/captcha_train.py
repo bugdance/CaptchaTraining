@@ -27,18 +27,18 @@ class CaptchaTrain:
 	# tf.compat.v1.disable_eager_execution()  # version 2.3.1
 
 	def __init__(self):
-		self.number = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-		self.low_case = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's',
-		                 't', 'u',
-		                 'v', 'w', 'x', 'y', 'z']
-		self.up_case = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
-		                'T', 'U',
-		                'V', 'W', 'X', 'Y', 'Z']
-
+		# self.number = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+		self.number = ['2', '3', '4', '5', '6', '7', '8', '9']
+		self.low_case = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u',
+						 'v', 'w', 'x', 'y', 'z']
+		# self.up_case = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U',
+		#    'V', 'W', 'X', 'Y', 'Z']
+		self.up_case = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U',
+						'V', 'W', 'X', 'Y', 'Z']
 		self.captcha_list = self.number + self.up_case
-		self.captcha_len = 6
-		self.captcha_height = 66
-		self.captcha_width = 203
+		self.captcha_len = 4
+		self.captcha_height = 40
+		self.captcha_width = 60
 		
 		self.CS = CaptchaSelect()
 		
