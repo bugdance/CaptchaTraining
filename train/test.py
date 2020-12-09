@@ -8,7 +8,7 @@ import os
 
 def run():
     s = requests.session()
-    n = 1945
+    n = 550
     while 1:
         h = {
                         "Accept": "*/*",
@@ -41,11 +41,11 @@ def run():
         }
         img = s.get(url, headers=h)
 
-        # with open(f"../images/h{n}.jpg", "wb") as f:
-        #     f.write(img.content)
-        with open(f"test.jpg", "wb") as f:
+        with open(f"../images/h{n}.jpg", "wb") as f:
             f.write(img.content)
-        print("OK")
+        # with open(f"test.jpg", "wb") as f:
+        #     f.write(img.content)
+        # print("OK")
         n += 1
         time.sleep(3)
 
@@ -61,28 +61,28 @@ def two_value():
     for i in names:
 
         # 打开文件夹中的图片
-        image=Image.open(f'../test/{i}')
+        image = Image.open(f'../test/{i}')
         # 灰度图
-        lim=image.convert('L')
+        lim = image.convert('L')
         # 灰度阈值设为165，低于这个值的点全部填白色
-        threshold=165
-        table=[]
+        threshold = 140
+        table = []
 
         for j in range(256):
-            if j<threshold:
-                table.append(0)
-            else:
+            if j < threshold:
                 table.append(1)
+            else:
+                table.append(0)
 
-        bim=lim.point(table,'1')
+        bim = lim.point(table, '1')
         bim.save(f'../test2/{i}')
 
 
 if __name__ == "__main__":
 
-    run()
+    # run()
 
 
 
 
-    # two_value()
+    two_value()

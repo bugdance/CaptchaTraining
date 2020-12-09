@@ -36,16 +36,15 @@ app.config['JSON_AS_ASCII'] = False
 app.logger = logging.getLogger('flask')
 app.logger.setLevel(level=logging.INFO)
 app.formatter = logging.Formatter('[%(asctime)s]%(message)s')
-app.handler = handlers.TimedRotatingFileHandler(
-	"log/captcha.log", when='h', backupCount=6, encoding='utf-8')
-# app.handler = logging.FileHandler("captcha.log")
-# app.handler = logging.StreamHandler()
+# app.handler = handlers.TimedRotatingFileHandler(
+# 	"log/captcha.log", when='h', backupCount=6, encoding='utf-8')
+app.handler = logging.StreamHandler()
 app.handler.setFormatter(app.formatter)
 app.logger.addHandler(app.handler)
 
 
 # # # 接口请求地址，http://x.x.x.x:18088/captcha/ko/。
-@app.route('/captcha/ko/', methods=['POST'])
+@app.route('/captcha/weiboyi/', methods=['POST'])
 def captcha_training() -> str:
 	# # # 开始计时，回调声明。
 	start_time = time.time()

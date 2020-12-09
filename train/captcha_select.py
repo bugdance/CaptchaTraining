@@ -37,8 +37,9 @@ class CaptchaSelect:
         self.captcha_len = 4
         self.captcha_height = 40
         self.captcha_width = 60
-        self.captcha_path = '../test2/'  # 图片文件夹
-    
+        self.train_path = '../test2/'  # 图片文件夹
+        self.test_path = '../test4/'
+
     def random_captcha_text(self):
         """
         随机生成定长字符串
@@ -50,9 +51,8 @@ class CaptchaSelect:
         captcha_size = self.captcha_len
         captcha_text = [random.choice(char_set) for _ in range(captcha_size)]
         return ''.join(captcha_text)
-    
-    
-    def gen_captcha_text_and_image(self):
+
+    def gen_captcha_train_and_image(self):
         """
         生成随机验证码
         :param width: 验证码图片宽度
@@ -61,13 +61,33 @@ class CaptchaSelect:
         :return: 验证码字符串，验证码图像np数组
         """
         names = []
-        dirs = os.listdir(self.captcha_path)
+        dirs = os.listdir(self.train_path)
+        for dir in dirs:
+            names.append(dir)
+
+        p = random.choice(names)
+        s = p.split("-")
+        captcha_image = Image.open(self.train_path + p)
+        # 转化为np数组
+        captcha_image = np.array(captcha_image)
+        return s[0][:4], captcha_image    # 这里要改
+
+    def gen_captcha_test_and_image(self):
+        """
+        生成随机验证码
+        :param width: 验证码图片宽度
+        :param height: 验证码图片高度
+        :param save: 是否保存（None）
+        :return: 验证码字符串，验证码图像np数组
+        """
+        names = []
+        dirs = os.listdir(self.test_path)
         for dir in dirs:
             names.append(dir)
         
         p = random.choice(names)
         s = p.split("-")
-        captcha_image = Image.open(self.captcha_path + p)
+        captcha_image = Image.open(self.test_path + p)
         # 转化为np数组
         captcha_image = np.array(captcha_image)
         return s[0][:4], captcha_image    # 这里要改
@@ -121,17 +141,39 @@ class CaptchaSelect:
         return ''.join(text_list)
     
     
-    def wrap_gen_captcha_text_and_image(self, shape=(50, 180, 3)):
+    # def wrap_gen_captcha_text_and_image(self, shape=(50, 180, 3)):
+    #     """
+    #     返回特定shape图片
+    #     :param shape:
+    #     :return:
+    #     """
+    #     t, im = self.gen_captcha_text_and_image()
+    #     return t, im
+
+    def get_train_batch(self, batch_count=60):
         """
-        返回特定shape图片
-        :param shape:
-        :return:
+        获取训练图片组
+        :param batch_count: default 60
+        :param width: 验证码宽度
+        :param height: 验证码高度
+        :return: batch_x, batch_yc
         """
-        t, im = self.gen_captcha_text_and_image()
-        return t, im
+
+        width = self.captcha_width
+        height = self.captcha_height
+
+        batch_x = np.zeros([batch_count, width * height])
+        batch_y = np.zeros([batch_count, self.captcha_len * len(self.captcha_list)])
+        for i in range(batch_count):    # 生成对应的训练集
+            text, image = self.gen_captcha_train_and_image()
+            image = self.convert2gray(image)     # 转灰度numpy
+            # 将图片数组一维化 同时将文本也对应在两个二维组的同一行
+            batch_x[i, :] = image.flatten() / 255
+            batch_y[i, :] = self.text2vec(text)  # 验证码文本的向量形式
+        # 返回该训练批次
+        return batch_x, batch_y
     
-    
-    def get_next_batch(self, batch_count=60):
+    def get_test_batch(self, batch_count=60):
         """
         获取训练图片组
         :param batch_count: default 60
@@ -146,7 +188,7 @@ class CaptchaSelect:
         batch_x = np.zeros([batch_count, width * height])
         batch_y = np.zeros([batch_count, self.captcha_len * len(self.captcha_list)])
         for i in range(batch_count):    # 生成对应的训练集
-            text, image = self.wrap_gen_captcha_text_and_image()
+            text, image = self.gen_captcha_test_and_image()
             image = self.convert2gray(image)     # 转灰度numpy
             # 将图片数组一维化 同时将文本也对应在两个二维组的同一行
             batch_x[i, :] = image.flatten() / 255

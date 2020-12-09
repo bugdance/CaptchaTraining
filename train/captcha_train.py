@@ -14,12 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # =============================================================================
-
-
+import os
 import tensorflow as tf
 from datetime import datetime
 from train.captcha_select import CaptchaSelect
 
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 
 class CaptchaTrain:
@@ -221,8 +221,7 @@ class CaptchaTrain:
 		height = self.captcha_height
 		width = self.captcha_width
 		y_size = len(self.captcha_list) * self.captcha_len
-		
-		acc_rate = 1  # 预设模型准确率标准
+
 		# 按照图片大小申请占位符
 		x = tf.compat.v1.placeholder(tf.float32, [None, height * width])
 		y = tf.compat.v1.placeholder(tf.float32, [None, y_size])
@@ -235,18 +234,25 @@ class CaptchaTrain:
 		# 计算准确率
 		accuracy = self.accuracy_graph(y, y_conv)
 		# 启动会话.开始训练
+		cpu_num = 4
+		config = tf.compat.v1.ConfigProto(device_count={"CPU": cpu_num},
+									  inter_op_parallelism_threads=cpu_num,
+									  intra_op_parallelism_threads=cpu_num,
+										  )
+
 		saver = tf.compat.v1.train.Saver()
-		sess = tf.compat.v1.Session()
+		sess = tf.compat.v1.Session(config=config)
 		sess.run(tf.compat.v1.global_variables_initializer())  # 初始化
-		
+
+		acc_rate = 0.92  # 预设模型准确率标准
 		step = 0  # 步数
 		
 		while 1:
-			batch_x, batch_y = self.CS.get_next_batch(64)
+			batch_x, batch_y = self.CS.get_train_batch(64)
 			sess.run(optimizer, feed_dict={x: batch_x, y: batch_y, keep_prob: 0.75})
 			# 每训练一百次测试一次
 			if step % 100 == 0:
-				batch_x_test, batch_y_test = self.CS.get_next_batch(100)
+				batch_x_test, batch_y_test = self.CS.get_test_batch(100)
 				acc = sess.run(accuracy, feed_dict={x: batch_x_test, y: batch_y_test, keep_prob: 1.0})
 				print(datetime.now().strftime('%c'), ' step:', step, ' accuracy:', acc)
 				# 准确率满足要求，保存模型
@@ -275,33 +281,31 @@ class CaptchaTrain:
 		x = tf.compat.v1.placeholder(tf.float32, [None, height * width])
 		keep_prob = tf.compat.v1.placeholder(tf.float32)
 		y_conv = self.cnn_graph(x, keep_prob, (height, width))
-		
-		
+
+
 		saver = tf.compat.v1.train.Saver()
 		module_file = tf.compat.v1.train.latest_checkpoint(model_path)
 
-		# cpu_num = 4
-		# config = tf.compat.v1.ConfigProto(device_count={"CPU": cpu_num},
-		#                         inter_op_parallelism_threads=cpu_num,
-		#                         intra_op_parallelism_threads=cpu_num,
-		#                         log_device_placement=True)
+		cpu_num = 4
+		config = tf.compat.v1.ConfigProto(device_count={"CPU": cpu_num},
+		                        inter_op_parallelism_threads=cpu_num,
+		                        intra_op_parallelism_threads=cpu_num,
+										)
 
-		
-		with tf.compat.v1.Session() as sess:
 
-			
+		with tf.compat.v1.Session(config = config) as sess:
+
+
 			# self.sess.run(tf.compat.v1.global_variables_initializer())  # 初始化
 
 			saver.restore(sess, module_file)
-			
+
 			predict = tf.argmax(tf.reshape(y_conv, [-1, self.captcha_len, len(self.captcha_list)]), 2)
 			vector_list = sess.run(predict, feed_dict={x: image_list, keep_prob: 1})
 			vector_list = vector_list.tolist()
 			text_list = [self.vec2text(vector) for vector in vector_list]
-			
+
 			return text_list
-
-
 
 
 if __name__ == '__main__':

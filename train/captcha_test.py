@@ -21,63 +21,71 @@ from concurrent.futures import ThreadPoolExecutor
 import requests
 import time
 from PIL import Image
+from io import BytesIO
+import demjson
 
-
-
-
-def test(n):
-	
-	s = requests.session()
-	response = s.get("https://cashiermd.95516.com/b2c/checkcode.action")
-	image_data = response.content
-	
-	response = s.post("http://114.116.242.163:18088/captcha/ko/", data=image_data)
-	print(response.text)
-	
-	# with open(f"img/{response.text}-{int(time.time())}.png", "wb") as f:
-	# 	f.write(image_data)
 
 
 def test2(n):
-	# s = requests.session()
-	# header = {
-	# 	"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
-	# 				  "Chrome/86.0.4240.75 Safari/537.36",
-	# 	"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,"
-	# 			  "image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
-	# 	"Accept-Language": "en-US,en;q=0.9,zh;q=0.8,zh-TW;q=0.7",
-	# 	"Host": "weixin.sogou.com",
-	# 	"Sec-Fetch-Site": "same-origin",
-	# 	"Sec-Fetch-Mode": "no-cors",
-	# 	"Sec-Fetch-Dest": "image",
-	# 	"Referer": "https://weixin.sogou.com/antispider/?from=%2Fweixin%3Ftype%3D1%26query%3DLife-BOOKs%26ie%3Dutf8%26s_from%3Dinput%26_sug_%3Dy%26_sug_type_%3D",
-	#
-	# }
-	# response = s.get(url="https://weixin.sogou.com/antispider/util/seccode.php", headers=header)
-	# image_data = response.content
+	s = requests.session()
+	h = {
+		"Accept": "*/*",
+		"Accept-Encoding": "gzip, deflate",
+		"Accept-Language": "zh-CN,zh;q=0.9",
+		"Connection": "keep-alive",
+		"Host": "chuanbo.weiboyi.com",
+		"Referer": "http://www.weiboyi.com/",
+		"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36"
+
+	}
+	r = s.get("http://chuanbo.weiboyi.com/hwauth/index/captchaajax", headers=h)
+	t = r.text
+	t = t.replace("(", "")
+	t = t.replace(")", "")
+	a = demjson.decode(t)
+	url = a['url']
+
+	time.sleep(2)
+
+	h = {
+		"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+		"Accept-Encoding": "gzip, deflate",
+		"Accept-Language": "zh-CN,zh;q=0.9",
+		"Connection": "keep-alive",
+		"Host": "img.weiboyi.com",
+		"Upgrade-Insecure-Requests": "1",
+		"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36"
+
+	}
+	img = s.get(url, headers=h)
+
+	with open(f"test.jpg", "wb") as f:
+		f.write(img.content)
+
 
 	# 打开文件夹中的图片
-	image=Image.open(f'test.jpg')
+	image = Image.open(BytesIO(img.content))
 	# 灰度图
-	lim=image.convert('L')
+	lim = image.convert('L')
 	# 灰度阈值设为165，低于这个值的点全部填白色
-	threshold=165
-	table=[]
+	threshold = 140
+	table = []
 
 	for j in range(256):
-		if j<threshold:
-			table.append(0)
-		else:
+		if j < threshold:
 			table.append(1)
+		else:
+			table.append(0)
 
-	bim=lim.point(table,'1')
-	bim.save(f'test2.jpg')
+	bim = lim.point(table, '1')
 
+	bytesIO = BytesIO()
+	bim.save(bytesIO, format='jpeg')
+	image_data = bytesIO.getvalue()
 
-
-	with open(f"test2.jpg", "rb") as f:
-		image_data = f.read()
-
+	# bim.save('test2.jpg')
+	# with open("test2.jpg", "rb") as f:
+	# 	image_data = f.read()
 
 	s = time.time()
 	
@@ -109,7 +117,7 @@ if __name__ == '__main__':
 
 	# for i in range(100):
 	# 	test2(i)
-	
+
 	# executor = ThreadPoolExecutor(max_workers=1)
 	# urls = [3 for x in range(5000)]  # 并不是真的url
 	# for data in executor.map(test, urls):

@@ -190,14 +190,14 @@ class CaptchaRun:
 		
 		saver = tf.compat.v1.train.Saver()
 		module_file = tf.compat.v1.train.latest_checkpoint(model_path)
+
+		cpu_num = 4
+		config = tf.compat.v1.ConfigProto(device_count={"CPU": cpu_num},
+										  inter_op_parallelism_threads=cpu_num,
+										  intra_op_parallelism_threads=cpu_num,
+										  )
 		
-		# config = tf.compat.v1.ConfigProto(device_count={"CPU": 4},  # limit to num_cpu_core CPU usage
-		#                         inter_op_parallelism_threads=1,
-		#                         intra_op_parallelism_threads=1,
-		#                         # log_device_placement=True
-		#                                   )
-		
-		with tf.compat.v1.Session() as sess:
+		with tf.compat.v1.Session(config=config) as sess:
 			
 			saver.restore(sess, module_file)
 			
