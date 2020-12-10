@@ -93,7 +93,7 @@ def test2(n):
 	
 	pre_text = CR.captcha2text(image_data, 'model/')
 	
-	CR.tf.reset_default_graph()
+	CR.tf.compat.v1.reset_default_graph()
 	
 	e = time.time()
 	print(' 模型预测值:', pre_text, "时间：", e - s)

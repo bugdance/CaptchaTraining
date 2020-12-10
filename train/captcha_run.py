@@ -183,7 +183,8 @@ class CaptchaRun:
 		
 		image = self.content2image(image_data)
 		image_list = [image]
-		
+
+		tf.compat.v1.disable_eager_execution()
 		x = tf.compat.v1.placeholder(tf.float32, [None, height * width])
 		keep_prob = tf.compat.v1.placeholder(tf.float32)
 		y_conv = self.cnn_graph(x, keep_prob, (height, width))
@@ -191,7 +192,7 @@ class CaptchaRun:
 		saver = tf.compat.v1.train.Saver()
 		module_file = tf.compat.v1.train.latest_checkpoint(model_path)
 
-		cpu_num = 4
+		cpu_num = 2
 		config = tf.compat.v1.ConfigProto(device_count={"CPU": cpu_num},
 										  inter_op_parallelism_threads=cpu_num,
 										  intra_op_parallelism_threads=cpu_num,

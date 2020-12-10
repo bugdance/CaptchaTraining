@@ -36,9 +36,9 @@ app.config['JSON_AS_ASCII'] = False
 app.logger = logging.getLogger('flask')
 app.logger.setLevel(level=logging.INFO)
 app.formatter = logging.Formatter('[%(asctime)s]%(message)s')
-# app.handler = handlers.TimedRotatingFileHandler(
-# 	"log/captcha.log", when='h', backupCount=6, encoding='utf-8')
-app.handler = logging.StreamHandler()
+app.handler = handlers.TimedRotatingFileHandler(
+	"captcha.log", when='h', backupCount=6, encoding='utf-8')
+# app.handler = logging.StreamHandler()
 app.handler.setFormatter(app.formatter)
 app.logger.addHandler(app.handler)
 
@@ -60,7 +60,7 @@ def captcha_training() -> str:
 		
 		CR = CaptchaRun()
 		pre_text = CR.captcha2text(content, 'model/')
-		CR.tf.reset_default_graph()
+		CR.tf.compat.v1.reset_default_graph()
 
 		
 		if not pre_text:
@@ -81,4 +81,4 @@ def captcha_training() -> str:
 
 
 if __name__ == "__main__":
-	app.run(debug=False, host='127.0.0.1', port=18088)
+	app.run(debug=False, host='127.0.0.1', port=18082)
